@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2025 聖誕京阪 (Sharp)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+    
+    <style>
+         :root {
+            --primary: #586656;
+            --bg: #F3EDE2;
+            --card-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-light: #9CA3AF;
+            --accent: #D4A373;
+            --border-color: #e0e0e0;
+            
+            --cat-spot: #86A697;
+            --cat-food: #CB8A90;
+            --cat-shop: #E8A598;
+            --cat-transport: #3A8FB7;
+            --cat-hotel: #8D6E63;
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; border-radius: 0 !important; } 
+        /* Rule #4: Remove all border radius */
+
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 0; padding-bottom: 120px; letter-spacing: 0.02em; }
+
+        input[type="file"] { display: none !important; }
+
+        /* Header */
+        header { position: relative; height: 200px; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; transition: background-image 0.3s; background-color: #ddd; }
+        header::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%); }
+        .header-content { position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
+        .header-title { color: white; font-size: 1.6rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; cursor: text; min-width: 50%; }
+        .edit-cover-btn { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; font-size: 0.8rem; backdrop-filter: blur(5px); cursor: pointer; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; gap: 5px; transition: 0.2s; position: relative; z-index: 10; }
+
+        /* Tabs */
+        .tabs-wrapper { position: sticky; top: 0; background: #F3EDE2; backdrop-filter: blur(5px); z-index: 90; padding: 15px 0; border-bottom: 1px solid #ccc; }
+        .tabs { display: flex; justify-content: center; align-items: center; overflow-x: auto; padding: 0 15px; gap: 1px; scrollbar-width: none; }
+        .tab-btn { background: transparent; border: 1px solid #999; color: #666; padding: 8px 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; font-size: 0.95rem; transition: 0.2s; min-width: 90px; text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+        .tab-text { outline: none; display: inline-block; }
+        .tab-del { font-size: 0.7rem; opacity: 0.5; padding: 4px; }
+        .tab-del:hover { background: rgba(0,0,0,0.2); opacity: 1; color: #fff; }
+        .add-day-btn { background: #ccc; color: #fff; border: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; margin-left: 5px; }
+
+        /* Content */
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        .day-section { display: none; animation: fadeIn 0.4s ease; }
+        .day-section.active { display: block; }
+        
+        /* Rule #3: Header Layout Optimization */
+        .day-config-card { background: white; padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .day-info-left { display: flex; flex-direction: column; gap: 5px; }
+        .date-picker { border: none; background: transparent; font-family: inherit; color: var(--text-main); font-size: 1.1rem; font-weight: 700; padding: 0; }
+        .weather-display { font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 5px; }
+        
+        .expense-btn { 
+            background: #f4f4f4; border: 1px solid #ddd; color: var(--text-main); 
+            padding: 8px 12px; font-size: 0.9rem; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: flex-end; gap: 2px; transition: 0.2s; 
+            min-width: 100px;
+        }
+        .expense-btn:hover { background: #eaeaea; border-color: #ccc; }
+        .expense-btn small { font-size: 0.75rem; color: #888; }
+        .exp-total-display { font-weight: bold; color: var(--text-main); font-size: 1rem; }
+
+        /* Timeline Item */
+        /* Rule #6: Remove Icon, Keep Function (Long Press) */
+        .timeline-container { position: relative; padding-left: 20px; min-height: 50px; }
+        /* Rule #3b: Line Alignment */
+        .timeline-container::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #ccc; z-index: 0; }
+        
+        .timeline-item { background: var(--card-bg); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 1; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border-color); border-left: 4px solid var(--cat-spot); user-select: none; }
+        .timeline-item.dragging { opacity: 0.5; transform: scale(0.98); border: 1px dashed #999; }
+        
+        .item-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+        .meta-left { display: flex; align-items: center; gap: 12px; }
+        
+        /* Time */
+        .time-wrapper { position: relative; display: inline-block; width: 55px; height: 24px; }
+        .time-display { font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-main); position: absolute; top: 0; left: 0; pointer-events: none; }
+        .time-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
+        
+        .cat-select { border: none; padding: 2px 8px; font-size: 0.75rem; color: white; font-weight: 500; appearance: none; text-align: center; cursor: pointer; letter-spacing: 1px; position: relative; z-index: 5; background-color: var(--cat-spot); }
+
+        .item-main-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 5; }
+        .location-group { flex: 1; display: flex; align-items: center; gap: 8px; }
+        
+        /* Rule #2: Link Style - Text Black, Icon Color */
+        .location-name { font-size: 1.1rem; font-weight: 500; color: var(--text-main); text-decoration: none; cursor: pointer; }
+        .location-name:hover { opacity: 0.8; }
+        .map-icon { color: #ccc; font-size: 0.9rem; transition: 0.2s; }
+        .map-icon.active { color: #e76f51; } /* Active link color */
+
+        .action-group { display: flex; gap: 15px; opacity: 0.6; }
+        .icon-btn { cursor: pointer; font-size: 0.9rem; color: #aaa; transition: 0.2s; }
+        .icon-btn:hover { color: var(--primary); }
+        
+        .img-wrapper { display: none; margin-top: 10px; overflow: hidden; position: relative; z-index: 5; }
+        .img-wrapper.show { display: block; animation: slideDown 0.3s ease; }
+        .img-area { width: 100%; height: 180px; background-color: #f2f2f2; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; }
+
+        .note-area { font-size: 0.9rem; line-height: 1.6; color: #666; margin-top: 5px; white-space: pre-wrap; }
+        
+        .btn-add-spot { width: 100%; padding: 12px; margin-top: 10px; border: 1px dashed #ccc; background: white; color: #999; cursor: pointer; font-size: 0.95rem; transition: 0.3s; }
+        .btn-add-spot:hover { border-color: var(--primary); color: var(--primary); background: #fffdfa; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; height: 0; } to { opacity: 1; height: 180px; } }
+
+        .save-status { position: fixed; bottom: 20px; left: 20px; background: #333; color: white; padding: 8px 12px; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+        
+        /* --- Calculator --- */
+        .calc-widget { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .calc-btn { width: 50px; height: 50px; background: #333; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s; font-size: 1.2rem; }
+        .calc-btn:hover { background: black; }
+        
+        .calc-popup { position: absolute; top: 60px; right: 0; width: 300px; background: #222; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 20px; display: none; animation: fadeIn 0.2s; color: white; }
+        .calc-popup.show { display: block; }
+        
+        .calc-screen { margin-bottom: 15px; background: #333; padding: 15px; text-align: right; border: 1px solid #444; }
+        .calc-row-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .calc-label { font-size: 0.8rem; color: #888; }
+        .calc-val { font-size: 1.5rem; font-family: 'Roboto', sans-serif; font-weight: bold; color: #fff; }
+        #calcScreenTwd { color: #D4A373; }
+        
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-key { background: #444; border: none; color: white; height: 60px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
+        .calc-key:active { background: #666; }
+        .calc-key.op { background: var(--primary); }
+        .calc-key.clear { background: #c0392b; font-size: 1rem; }
+        .rate-info { margin-top: 10px; text-align: center; font-size: 0.75rem; color: #666; }
+
+        /* --- Rule #5: Unified Edit Modal --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: white; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .modal-header { padding: 15px 20px; background: #f9f9f9; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .modal-title { font-weight: bold; font-size: 1.1rem; color: var(--text-main); }
+        .modal-close { cursor: pointer; font-size: 1.5rem; color: #aaa; }
+        
+        .modal-body { padding: 20px; overflow-y: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 5px; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; font-size: 1rem; background: #fff; }
+        .form-textarea { width: 100%; padding: 10px; border: 1px solid #ddd; font-size: 1rem; height: 80px; resize: none; }
+        
+        .edit-img-preview { width: 100%; height: 150px; background: #eee; margin-top: 5px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; cursor: pointer; border: 1px dashed #ccc; color: #aaa; }
+
+        .modal-footer-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; font-size: 1rem; cursor: pointer; }
+
+        /* --- Expense Modal (Rule #8: Payer) --- */
+        .expense-list { flex: 1; overflow-y: auto; padding: 0; }
+        .expense-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; }
+        .expense-row:last-child { border-bottom: none; }
+        .expense-row-info { flex: 1; }
+        .exp-name { font-weight: 500; color: #333; }
+        .exp-payer { font-size: 0.8rem; color: #888; margin-right: 5px; background: #eee; padding: 2px 6px; }
+        .exp-cost { font-weight: bold; color: var(--text-main); }
+        .expense-row-del { color: #ddd; cursor: pointer; padding: 5px; margin-left: 10px; }
+        .expense-row-del:hover { color: #D62828; }
+
+        .modal-footer { background: #f9f9f9; padding: 20px; border-top: 1px solid #ddd; }
+        .expense-input-row { display: flex; gap: 5px; margin-bottom: 5px; }
+        .expense-add-btn { width: 100%; background: #333; color: white; border: none; padding: 10px; cursor: pointer; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="save-status" id="saveStatus">已儲存</div>
+
+<div class="calc-widget">
+    <div class="calc-btn" onclick="toggleCalc()"><i class="fas fa-calculator"></i></div>
+    <div class="calc-popup" id="calcPopup">
+        <div class="calc-screen">
+            <div class="calc-row-display">
+                <span class="calc-label">JPY</span>
+                <span class="calc-val" id="calcScreenJpy">0</span>
+            </div>
+            <div class="calc-row-display" style="border-top:1px solid #555; padding-top:5px;">
+                <span class="calc-label">TWD</span>
+                <span class="calc-val" id="calcScreenTwd">0</span>
+            </div>
+        </div>
+        <div class="calc-grid">
+            <button class="calc-key" onclick="calcAppend(7)">7</button>
+            <button class="calc-key" onclick="calcAppend(8)">8</button>
+            <button class="calc-key" onclick="calcAppend(9)">9</button>
+            <button class="calc-key clear" onclick="calcClear()">C</button>
+            
+            <button class="calc-key" onclick="calcAppend(4)">4</button>
+            <button class="calc-key" onclick="calcAppend(5)">5</button>
+            <button class="calc-key" onclick="calcAppend(6)">6</button>
+            <button class="calc-key clear" onclick="calcBack()"><i class="fas fa-backspace"></i></button>
+            
+            <button class="calc-key" onclick="calcAppend(1)">1</button>
+            <button class="calc-key" onclick="calcAppend(2)">2</button>
+            <button class="calc-key" onclick="calcAppend(3)">3</button>
+            <button class="calc-key op" style="grid-row: span 2; height: 100%;" onclick="toggleCalc()"><i class="fas fa-check"></i></button>
+            
+            <button class="calc-key" onclick="calcAppend(0)" style="grid-column: span 2; width: 100%;">0</button>
+            <button class="calc-key" onclick="calcAppend('.')">.</button>
+        </div>
+        <div class="rate-info">
+            今日匯率: <span id="currentRateDisplay">--</span> (來源: API)
+        </div>
+    </div>
+</div>
+
+<header id="mainHeader">
+    <div class="header-content">
+        <div class="header-title" id="tripTitle" contenteditable="true">2025 聖誕京阪</div>
+        <label class="edit-cover-btn">
+            <i class="fas fa-camera"></i>
+            <input type="file" accept="image/*" onchange="uploadHeader(this)">
+        </label>
+    </div>
+</header>
+
+<div class="tabs-wrapper">
+    <div class="tabs" id="tabContainer"></div>
+</div>
+
+<div class="container" id="daysContainer"></div>
+
+<div class="modal-overlay" id="expenseModal" onclick="if(event.target===this) closeExpenseModal()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fas fa-wallet"></i> 當日消費紀錄</div>
+            <div class="modal-close" onclick="closeExpenseModal()">&times;</div>
+        </div>
+        
+        <div class="expense-list" id="expenseListContainer"></div>
+
+        <div class="modal-footer">
+            <div style="text-align:right; margin-bottom:10px; font-weight:bold; color:#333;">Total: ¥<span id="modalTotal">0</span></div>
+            <div class="expense-input-row">
+                <input type="text" id="newExpName" class="form-input" placeholder="品項 (如: 拉麵)" style="flex:2">
+                <input type="text" id="newExpPayer" class="form-input" placeholder="付款人" style="flex:1">
+            </div>
+            <div class="expense-input-row">
+                <input type="number" id="newExpCost" class="form-input" placeholder="¥ 金額" style="flex:1">
+            </div>
+            <button class="expense-add-btn" onclick="addExpenseFromFooter()">新增紀錄</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="editSpotModal" onclick="if(event.target===this) closeEditModal()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">編輯景點資訊</div>
+            <div class="modal-close" onclick="closeEditModal()">&times;</div>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editSpotId">
+            <div class="form-group">
+                <label class="form-label">景點名稱</label>
+                <input type="text" id="editName" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Google Maps 連結 (選填)</label>
+                <input type="text" id="editLink" class="form-input" placeholder="https://goo.gl/maps/...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">備註</label>
+                <textarea id="editNote" class="form-textarea"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">封面照片</label>
+                <label class="edit-img-preview" id="editImgPreview">
+                    <i class="fas fa-camera"></i> &nbsp;點擊更換
+                    <input type="file" accept="image/*" onchange="uploadEditImage(this)">
+                </label>
+            </div>
+        </div>
+        <button class="modal-footer-btn" onclick="saveSpotChanges()">儲存變更</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyADBcigTYZEWWKKMek6in5tIS9UCtwOGvc",
+        authDomain: "kyototrip2025-9f476.firebaseapp.com",
+        projectId: "kyototrip2025-9f476",
+        storageBucket: "kyototrip2025-9f476.firebasestorage.app",
+        messagingSenderId: "5322099136",
+        appId: "1:5322099136:web:747a244197dfe35c3ce025"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const urlParams = new URLSearchParams(window.location.search);
+    const tripId = urlParams.get('trip') || 'demo_trip_2025';
+
+    window.db = db; window.storage = storage; window.tripId = tripId; window.doc = doc; window.setDoc = setDoc; window.ref = ref; window.uploadBytes = uploadBytes; window.getDownloadURL = getDownloadURL;
+
+    window.onload = async function() {
+        fetchExchangeRate(); // Rule #7
+        try {
+            const docRef = doc(db, "trips", tripId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) renderTrip(docSnap.data());
+            else renderTrip(defaultData);
+        } catch (e) {
+            console.error("Load Error:", e);
+            renderTrip(defaultData);
+        }
+    };
+
+    window.saveToCloud = async function() {
+        const title = document.getElementById('tripTitle').innerText;
+        const coverImg = document.getElementById('mainHeader').dataset.bgUrl || '';
+        const days = [];
+        document.querySelectorAll('.day-section').forEach(section => {
+            const date = section.querySelector('.date-picker').value;
+            const tabBtn = document.getElementById('btn-' + section.id);
+            const dayName = tabBtn ? tabBtn.querySelector('.tab-text').innerText : 'New Day';
+            const items = [];
+            section.querySelectorAll('.timeline-item').forEach(item => {
+                const nameEl = item.querySelector('.location-name');
+                const linkUrl = item.dataset.link || ''; 
+                items.push({
+                    id: item.id,
+                    time: item.querySelector('.time-display').innerText,
+                    type: item.querySelector('.cat-select').value,
+                    name: nameEl.innerText,
+                    link: linkUrl,
+                    note: item.querySelector('.note-area').innerText,
+                    img: item.querySelector('.img-wrapper').dataset.bgUrl || ''
+                });
+            });
+            const expBtn = section.querySelector('.expense-btn');
+            const expensesData = expBtn.dataset.expenses ? JSON.parse(expBtn.dataset.expenses) : [];
+            days.push({ id: section.id, date: date, dayName: dayName, items: items, expenses: expensesData });
+        });
+        try {
+            await setDoc(doc(db, "trips", tripId), { title, cover: coverImg, days, updatedAt: new Date() });
+        } catch (e) { console.error("Save Error:", e); }
+    }
+
+    window.handleImageUpload = function(file, callback) {
+        if (!file) return;
+        if (typeof Compressor === 'undefined') { uploadOriginal(file, callback); return; }
+        new Compressor(file, {
+            quality: 0.6, maxWidth: 1280, mimeType: 'image/jpeg',
+            success(result) {
+                const storageRef = window.ref(window.storage, `images/${window.tripId}/${Date.now()}_comp.jpg`);
+                window.uploadBytes(storageRef, result).then((s) => window.getDownloadURL(s.ref)).then((u) => callback(u));
+            },
+            error(err) { uploadOriginal(file, callback); },
+        });
+    }
+    function uploadOriginal(file, callback) {
+        const storageRef = window.ref(window.storage, `images/${window.tripId}/${Date.now()}_orig.jpg`);
+        window.uploadBytes(storageRef, file).then((s) => window.getDownloadURL(s.ref)).then((u) => callback(u));
+    }
+</script>
+
+<script>
+    // --- UI Logic ---
+    const catColors = { 'spot': 'var(--cat-spot)', 'food': 'var(--cat-food)', 'shop': 'var(--cat-shop)', 'transport': 'var(--cat-transport)', 'hotel': 'var(--cat-hotel)' };
+    const defaultData = {
+        title: "2025 聖誕京阪",
+        cover: "https://d1grca2t3zpuug.cloudfront.net/2023/12/20231205snowfb.jpg",
+        days: [
+            { id: "day1", dayName: "Day 1", date: "2025-12-20", items: [{ id:"item_1", time: "14:00", type: "transport", name: "關西機場", note: "Haruka", img:"", link:"" }], expenses: [] }
+        ]
+    };
+
+    function renderTrip(data) {
+        document.getElementById('tripTitle').innerText = data.title;
+        if(data.cover) {
+            document.getElementById('mainHeader').style.backgroundImage = `url(${data.cover})`;
+            document.getElementById('mainHeader').dataset.bgUrl = data.cover;
+        }
+        document.getElementById('tabContainer').innerHTML = '';
+        document.getElementById('daysContainer').innerHTML = '';
+        
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-day-btn'; addBtn.onclick = addNewDay; addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        document.getElementById('tabContainer').appendChild(addBtn);
+
+        if(data.days && data.days.length > 0) {
+            data.days.forEach(day => createDayDOM(day.id, day.dayName, day.date, day.items, day.expenses || []));
+            switchTab(data.days[0].id, document.getElementById('btn-' + data.days[0].id));
+        }
+    }
+
+    function createDayDOM(dayId, dayNameText, dateVal, items, expenses = []) {
+        const tabBtn = document.createElement('div');
+        tabBtn.className = 'tab-btn'; tabBtn.id = 'btn-' + dayId;
+        tabBtn.innerHTML = `<span class="tab-text" contenteditable="true">${dayNameText}</span><i class="fas fa-times tab-del" onclick="removeDay(event, '${dayId}')"></i>`;
+        tabBtn.onclick = function() { switchTab(dayId, this); };
+        document.querySelector('.add-day-btn').before(tabBtn);
+
+        const totalExp = expenses.reduce((sum, item) => sum + (parseInt(item.cost) || 0), 0);
+
+        const section = document.createElement('div');
+        section.id = dayId; section.className = 'day-section';
+        // Rule #3: Header Layout
+        section.innerHTML = `
+            <div class="day-config-card">
+                <div class="day-info-left">
+                    <input type="date" class="date-picker" onchange="fetchWeather(this)" value="${dateVal}">
+                    <div class="weather-display"><span class="weather-text">--°C</span></div>
+                </div>
+                <div class="expense-btn" onclick="openExpenseModal('${dayId}')" data-expenses='${JSON.stringify(expenses)}'>
+                    <small>記帳本</small>
+                    <span class="exp-total-display">¥${totalExp}</span>
+                </div>
+            </div>
+            <div class="timeline-container" id="list-${dayId}"></div>
+            <button class="btn-add-spot" onclick="addSpot('list-${dayId}')"><i class="fas fa-plus"></i> 新增行程</button>
+        `;
+        document.getElementById('daysContainer').appendChild(section);
+        fetchWeather(section.querySelector('.date-picker'));
+        items.forEach(item => addSpot(`list-${dayId}`, item));
+    }
+
+    // Rule #6: Long Press Drag Logic
+    let dragTimer;
+    let draggedItem = null;
+
+    function bindLongPressDrag(item) {
+        item.addEventListener('mousedown', startPress);
+        item.addEventListener('touchstart', startPress);
+        item.addEventListener('mouseup', cancelPress);
+        item.addEventListener('mouseleave', cancelPress);
+        item.addEventListener('touchend', cancelPress);
+        
+        item.addEventListener('dragstart', () => item.classList.add('dragging'));
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            item.setAttribute('draggable', 'false'); 
+            triggerAutoSave();
+        });
+    }
+
+    function startPress(e) {
+        if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.classList.contains('icon-btn') || e.target.classList.contains('location-name')) return;
+        draggedItem = this;
+        dragTimer = setTimeout(() => {
+            draggedItem.setAttribute('draggable', 'true');
+            // Visual feedback
+            draggedItem.style.opacity = '0.7';
+        }, 500); 
+    }
+
+    function cancelPress() {
+        clearTimeout(dragTimer);
+        if(draggedItem) {
+            draggedItem.style.opacity = '1';
+            // If dragging didn't start, disable it
+            setTimeout(()=>draggedItem.setAttribute('draggable', 'false'), 100);
+        }
+    }
+
+    function addSpot(containerId, data = null) {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'timeline-item';
+        div.id = data ? data.id : 'item_' + Date.now();
+        div.setAttribute('draggable', 'false'); 
+        
+        let d = data || { time: '12:00', name: '新行程', type: 'spot', note: '', img: '', link: '' };
+        div.dataset.link = d.link || '';
+
+        // Rule #2: Link Style (Black text, Color Icon)
+        const mapIconColor = d.link ? 'color:#e76f51' : 'color:#ccc';
+        const nameCursor = d.link ? 'cursor:pointer' : 'cursor:default';
+        const nameClick = d.link ? `onclick="window.open('${d.link}', '_blank')"` : '';
+
+        div.innerHTML = `
+            <div class="item-meta-row">
+                <div class="meta-left">
+                    <div class="time-wrapper">
+                        <span class="time-display">${d.time}</span>
+                        <input type="time" class="time-input-hidden" value="${d.time}" oninput="updateTimeDisplay(this)">
+                    </div>
+                    <select class="cat-select" onchange="updateCatColor(this)" style="background-color: ${catColors[d.type] || 'var(--cat-spot)'};">
+                        
+                        <option value="spot" ${d.type=='spot'?'selected':''}>景點</option>
+                        <option value="food" ${d.type=='food'?'selected':''}>餐廳</option>
+                        <option value="shop" ${d.type=='shop'?'selected':''}>購物</option>
+                        <option value="transport" ${d.type=='transport'?'selected':''}>交通</option>
+                        <option value="hotel" ${d.type=='hotel'?'selected':''}>住宿</option>
+                    </select>
+                </div>
+            </div>
+            <div class="item-main-row">
+                <div class="location-group">
+                    <span class="location-name" style="${nameCursor}" ${nameClick}>${d.name}</span>
+                    <i class="fas fa-map-marker-alt map-icon" style="${mapIconColor}"></i>
+                </div>
+                <div class="action-group">
+                    <i class="fas fa-pen icon-btn" onclick="openEditModal('${div.id}')"></i>
+                    <i class="far fa-trash-alt icon-btn delete" onclick="deleteSpot(this)"></i>
+                </div>
+            </div>
+            <div class="img-wrapper ${d.img ? 'show' : ''}" data-bg-url="${d.img||''}">
+                <div class="img-area" style="${d.img ? 'background-image:url('+d.img+')' : ''}"></div>
+            </div>
+            <div class="note-area">${d.note}</div>
+        `;
+        container.appendChild(div);
+        bindLongPressDrag(div);
+        
+        // Init Drag Over for container
+        container.addEventListener('dragover', e => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(container, e.clientY);
+            const draggable = document.querySelector('.dragging');
+            if (draggable) {
+                if (afterElement == null) container.appendChild(draggable);
+                else container.insertBefore(draggable, afterElement);
+            }
+        });
+    }
+
+    // --- Unified Edit Modal (Rule #5) ---
+    let editingSpotId = null;
+    let tempImgUrl = "";
+
+    window.openEditModal = function(spotId) {
+        editingSpotId = spotId;
+        const item = document.getElementById(spotId);
+        document.getElementById('editName').value = item.querySelector('.location-name').innerText;
+        document.getElementById('editLink').value = item.dataset.link || "";
+        document.getElementById('editNote').value = item.querySelector('.note-area').innerText;
+        
+        tempImgUrl = item.querySelector('.img-wrapper').dataset.bgUrl || "";
+        const preview = document.getElementById('editImgPreview');
+        if(tempImgUrl) {
+            preview.style.backgroundImage = `url(${tempImgUrl})`;
+            preview.innerHTML = '';
+        } else {
+            preview.style.backgroundImage = '';
+            preview.innerHTML = '<i class="fas fa-camera"></i> &nbsp;點擊更換<input type="file" accept="image/*" onchange="uploadEditImage(this)">';
+        }
+        
+        document.getElementById('editSpotModal').classList.add('show');
+    }
+
+    window.closeEditModal = function() { document.getElementById('editSpotModal').classList.remove('show'); }
+
+    window.uploadEditImage = function(input) {
+        if(input.files && input.files[0]) {
+            const preview = document.getElementById('editImgPreview');
+            preview.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            window.handleImageUpload(input.files[0], (url) => {
+                tempImgUrl = url;
+                preview.style.backgroundImage = `url(${url})`;
+                preview.innerHTML = '';
+            });
+        }
+    }
+
+    window.saveSpotChanges = function() {
+        if(!editingSpotId) return;
+        const item = document.getElementById(editingSpotId);
+        const name = document.getElementById('editName').value;
+        const link = document.getElementById('editLink').value;
+        const note = document.getElementById('editNote').value;
+
+        // Update UI
+        item.querySelector('.location-name').innerText = name;
+        item.dataset.link = link;
+        item.querySelector('.note-area').innerText = note;
+        
+        // Update Link Style
+        const nameEl = item.querySelector('.location-name');
+        const iconEl = item.querySelector('.map-icon');
+        if(link) {
+            nameEl.style.cursor = 'pointer';
+            nameEl.onclick = () => window.open(link, '_blank');
+            iconEl.style.color = '#e76f51';
+        } else {
+            nameEl.style.cursor = 'default';
+            nameEl.onclick = null;
+            iconEl.style.color = '#ccc';
+        }
+
+        // Update Image
+        const imgWrapper = item.querySelector('.img-wrapper');
+        const imgArea = item.querySelector('.img-area');
+        imgWrapper.dataset.bgUrl = tempImgUrl;
+        imgArea.style.backgroundImage = tempImgUrl ? `url(${tempImgUrl})` : '';
+        if(tempImgUrl) imgWrapper.classList.add('show');
+        else imgWrapper.classList.remove('show');
+
+        closeEditModal();
+        triggerAutoSave();
+    }
+
+    // --- Calculator Logic (Rule #7 API) ---
+    let currentCalcVal = '0';
+    let apiRate = 0.22; // Default fallback
+
+    window.toggleCalc = function() { document.getElementById('calcPopup').classList.toggle('show'); }
+    window.calcAppend = function(val) {
+        if(currentCalcVal === '0' && val !== '.') currentCalcVal = '';
+        if(val === '.' && currentCalcVal.includes('.')) return;
+        currentCalcVal += val;
+        updateCalcScreen();
+    }
+    window.calcClear = function() { currentCalcVal = '0'; updateCalcScreen(); }
+    window.calcBack = function() { currentCalcVal = currentCalcVal.slice(0, -1); if(!currentCalcVal) currentCalcVal='0'; updateCalcScreen(); }
+    
+    function updateCalcScreen() {
+        document.getElementById('calcScreenJpy').innerText = currentCalcVal;
+        const twd = (parseFloat(currentCalcVal) * apiRate).toFixed(0);
+        document.getElementById('calcScreenTwd').innerText = twd;
+    }
+
+    async function fetchExchangeRate() {
+        try {
+            const res = await fetch('https://api.exchangerate-api.com/v4/latest/JPY');
+            const data = await res.json();
+            apiRate = data.rates.TWD;
+            document.getElementById('currentRateDisplay').innerText = apiRate;
+        } catch(e) { console.log('Rate API Error', e); }
+    }
+
+    // --- Expense Modal Logic (Rule #8 Payer) ---
+    let currentExpenseDayId = null;
+    let expenseDataBuffer = [];
+
+    window.openExpenseModal = function(dayId) {
+        currentExpenseDayId = dayId;
+        const btn = document.querySelector(`#${dayId} .expense-btn`);
+        expenseDataBuffer = JSON.parse(btn.dataset.expenses || '[]');
+        renderExpenseList();
+        document.getElementById('expenseModal').classList.add('show');
+    }
+
+    window.closeExpenseModal = function() {
+        if(!currentExpenseDayId) return;
+        const total = expenseDataBuffer.reduce((sum, item) => sum + (parseInt(item.cost)||0), 0);
+        const btn = document.querySelector(`#${currentExpenseDayId} .expense-btn`);
+        btn.dataset.expenses = JSON.stringify(expenseDataBuffer);
+        btn.querySelector('.exp-total-display').innerText = '¥' + total;
+        document.getElementById('expenseModal').classList.remove('show');
+        currentExpenseDayId = null;
+        triggerAutoSave();
+    }
+
+    window.addExpenseFromFooter = function() {
+        const name = document.getElementById('newExpName').value;
+        const payer = document.getElementById('newExpPayer').value;
+        const cost = parseInt(document.getElementById('newExpCost').value) || 0;
+
+        if(name && cost > 0) {
+            expenseDataBuffer.push({ name, payer, cost });
+            document.getElementById('newExpName').value = '';
+            document.getElementById('newExpCost').value = '';
+            renderExpenseList();
+        }
+    }
+
+    window.deleteExpenseItem = function(index) {
+        expenseDataBuffer.splice(index, 1);
+        renderExpenseList();
+    }
+
+    function renderExpenseList() {
+        const list = document.getElementById('expenseListContainer');
+        list.innerHTML = '';
+        let total = 0;
+        expenseDataBuffer.forEach((exp, index) => {
+            total += parseInt(exp.cost) || 0;
+            const div = document.createElement('div');
+            div.className = 'expense-row';
+            div.innerHTML = `
+                <div class="expense-row-info">
+                    <div class="exp-name">${exp.name}</div>
+                    <small style="color:#aaa;">${exp.payer ? '付款: '+exp.payer : ''}</small>
+                </div>
+                <span class="exp-cost">¥${exp.cost}</span>
+                <i class="fas fa-trash expense-row-del" onclick="deleteExpenseItem(${index})"></i>
+            `;
+            list.appendChild(div);
+        });
+        document.getElementById('modalTotal').innerText = total;
+    }
+
+    // --- Helpers ---
+    function uploadHeader(input) {
+        if(input.files && input.files[0]) {
+            window.handleImageUpload(input.files[0], (url) => {
+                document.getElementById('mainHeader').style.backgroundImage = `url(${url})`;
+                document.getElementById('mainHeader').dataset.bgUrl = url;
+                triggerAutoSave();
+            });
+        }
+    }
+
+    function switchTab(dayId, btn) {
+        document.querySelectorAll('.day-section').forEach(d => d.classList.remove('active'));
+        const target = document.getElementById(dayId);
+        if(target) target.classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+    }
+
+    function addNewDay() {
+        const id = 'day' + Date.now();
+        createDayDOM(id, "New Day", new Date().toISOString().split('T')[0], [], []);
+        const tabs = document.querySelectorAll('.tab-btn');
+        switchTab(id, tabs[tabs.length-1]);
+        triggerAutoSave();
+    }
+
+    function removeDay(event, dayId) {
+        event.stopPropagation();
+        if(confirm('確定刪除這一天嗎？')) {
+            document.getElementById('btn-' + dayId)?.remove();
+            document.getElementById(dayId)?.remove();
+            document.querySelector('.tab-btn')?.click();
+            triggerAutoSave();
+        }
+    }
+
+    function updateTimeDisplay(input) { input.previousElementSibling.innerText = input.value; }
+    function updateCatColor(select) { 
+        select.style.backgroundColor = catColors[select.value]; 
+        select.closest('.timeline-item').style.borderLeftColor = catColors[select.value];
+    }
+    function deleteSpot(btn) { 
+        if(confirm('移除此行程？')) {
+            btn.closest('.timeline-item').remove();
+            triggerAutoSave();
+        }
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.timeline-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
+            else return closest;
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    async function fetchWeather(dateInput) {
+        const dateStr = dateInput.value;
+        const display = dateInput.nextElementSibling.querySelector('.weather-text') || dateInput.nextElementSibling;
+        if (!dateStr) return;
+        display.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=35.0116&longitude=135.7681&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${dateStr}&end_date=${dateStr}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.daily && data.daily.time.length > 0) {
+                const code = data.daily.weathercode[0];
+                const min = data.daily.temperature_2m_min[0];
+                const max = data.daily.temperature_2m_max[0];
+                let icon = 'fas fa-cloud';
+                if(code === 0) icon = 'fas fa-sun';
+                else if(code >= 51) icon = 'fas fa-umbrella';
+                display.innerHTML = `<i class="${icon}"></i> ${min}-${max}°C`;
+            } else { display.innerHTML = '查無資料'; }
+        } catch (e) { display.innerHTML = '--'; }
+    }
+
+    let saveTimeout;
+    function triggerAutoSave() {
+        const status = document.getElementById('saveStatus');
+        status.innerText = "變更未儲存..."; status.style.opacity = 1;
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            status.innerText = "自動儲存中...";
+            window.saveToCloud().then(() => {
+                status.innerText = "已自動儲存"; setTimeout(() => status.style.opacity = 0, 2000);
+            });
+        }, 2000);
+    }
+    
+    document.body.addEventListener('input', triggerAutoSave);
+    document.body.addEventListener('change', triggerAutoSave);
+    document.body.addEventListener('click', (e) => {
+        if(e.target.tagName === 'I' || e.target.tagName === 'BUTTON' || e.target.classList.contains('tab-del')) triggerAutoSave();
+    });
+</script>
+</body>
+</html>
