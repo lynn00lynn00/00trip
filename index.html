@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2025 聖誕京阪</title>
+    <title>2025 聖誕京阪 (Final Polish)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -26,8 +26,13 @@
             --cat-hotel: #8D6E63;
         }
 
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; border-radius: 0 !important; } 
-        /* Rule #4: Remove all border radius */
+        /* Rule: Sharp corners globally */
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; border-radius: 0; } 
+        
+        /* Rule #2: Specific override for rounded category tags */
+        .cat-select { border-radius: 50px !important; }
+        .calc-btn, .calc-key { border-radius: 0 !important; } /* Keep calc sharp */
+        .calc-key { border-radius: 50% !important; } /* Round calc keys */
 
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 0; padding-bottom: 120px; letter-spacing: 0.02em; }
 
@@ -40,14 +45,31 @@
         .header-title { color: white; font-size: 1.6rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; cursor: text; min-width: 50%; }
         .edit-cover-btn { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; font-size: 0.8rem; backdrop-filter: blur(5px); cursor: pointer; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; gap: 5px; transition: 0.2s; position: relative; z-index: 10; }
 
-        /* Tabs */
+        /* Tabs (Rule #1: Left aligned, Safe Delete) */
         .tabs-wrapper { position: sticky; top: 0; background: #F3EDE2; backdrop-filter: blur(5px); z-index: 90; padding: 15px 0; border-bottom: 1px solid #ccc; }
-        .tabs { display: flex; justify-content: center; align-items: center; overflow-x: auto; padding: 0 15px; gap: 1px; scrollbar-width: none; }
-        .tab-btn { background: transparent; border: 1px solid #999; color: #666; padding: 8px 16px; cursor: pointer; white-space: nowrap; flex-shrink: 0; font-size: 0.95rem; transition: 0.2s; min-width: 90px; text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tabs { display: flex; justify-content: flex-start; align-items: center; overflow-x: auto; padding: 0 15px; gap: 10px; scrollbar-width: none; }
+        
+        .tab-btn { 
+            background: transparent; border: 1px solid #999; color: #666; 
+            padding: 0; /* Remove padding from container, move to children */
+            cursor: pointer; white-space: nowrap; flex-shrink: 0; font-size: 0.95rem; 
+            transition: 0.2s; min-width: 100px; text-align: center; font-weight: 500; 
+            display: flex; align-items: stretch; justify-content: space-between;
+            overflow: hidden;
+        }
         .tab-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-        .tab-text { outline: none; display: inline-block; }
-        .tab-del { font-size: 0.7rem; opacity: 0.5; padding: 4px; }
-        .tab-del:hover { background: rgba(0,0,0,0.2); opacity: 1; color: #fff; }
+        
+        .tab-text { padding: 8px 12px; flex-grow: 1; outline: none; }
+        
+        .tab-del-wrapper {
+            display: flex; align-items: center; justify-content: center;
+            width: 30px; border-left: 1px solid rgba(0,0,0,0.1);
+            background: rgba(0,0,0,0.02);
+        }
+        .tab-btn.active .tab-del-wrapper { border-left: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); }
+        .tab-del { font-size: 0.8rem; opacity: 0.7; padding: 5px; }
+        .tab-del:hover { color: #ff6b6b; opacity: 1; }
+        
         .add-day-btn { background: #ccc; color: #fff; border: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; margin-left: 5px; }
 
         /* Content */
@@ -55,11 +77,10 @@
         .day-section { display: none; animation: fadeIn 0.4s ease; }
         .day-section.active { display: block; }
         
-        /* Rule #3: Header Layout Optimization */
         .day-config-card { background: white; padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
         .day-info-left { display: flex; flex-direction: column; gap: 5px; }
         .date-picker { border: none; background: transparent; font-family: inherit; color: var(--text-main); font-size: 1.1rem; font-weight: 700; padding: 0; }
-        .weather-display { font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 5px; }
+        .weather-display { font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 5px; font-weight: 500; }
         
         .expense-btn { 
             background: #f4f4f4; border: 1px solid #ddd; color: var(--text-main); 
@@ -72,9 +93,8 @@
         .exp-total-display { font-weight: bold; color: var(--text-main); font-size: 1rem; }
 
         /* Timeline Item */
-        /* Rule #6: Remove Icon, Keep Function (Long Press) */
+        /* Rule #4: Drag Fix - User Select */
         .timeline-container { position: relative; padding-left: 20px; min-height: 50px; }
-        /* Rule #3b: Line Alignment */
         .timeline-container::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #ccc; z-index: 0; }
         
         .timeline-item { background: var(--card-bg); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 1; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border-color); border-left: 4px solid var(--cat-spot); user-select: none; }
@@ -83,23 +103,22 @@
         .item-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
         .meta-left { display: flex; align-items: center; gap: 12px; }
         
-        /* Time */
         .time-wrapper { position: relative; display: inline-block; width: 55px; height: 24px; }
         .time-display { font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-main); position: absolute; top: 0; left: 0; pointer-events: none; }
         .time-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
         
-        .cat-select { border: none; padding: 2px 8px; font-size: 0.75rem; color: white; font-weight: 500; appearance: none; text-align: center; cursor: pointer; letter-spacing: 1px; position: relative; z-index: 5; background-color: var(--cat-spot); }
+        /* Rule #2: Round Pill for Category */
+        .cat-select { border: none; padding: 4px 12px; font-size: 0.75rem; color: white; font-weight: 500; appearance: none; text-align: center; cursor: pointer; letter-spacing: 1px; position: relative; z-index: 5; background-color: var(--cat-spot); }
 
         .item-main-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 5; }
         .location-group { flex: 1; display: flex; align-items: center; gap: 8px; }
         
-        /* Rule #2: Link Style - Text Black, Icon Color */
         .location-name { font-size: 1.1rem; font-weight: 500; color: var(--text-main); text-decoration: none; cursor: pointer; }
         .location-name:hover { opacity: 0.8; }
         .map-icon { color: #ccc; font-size: 0.9rem; transition: 0.2s; }
-        .map-icon.active { color: #e76f51; } /* Active link color */
+        .map-icon.active { color: #e76f51; }
 
-        .action-group { display: flex; gap: 15px; opacity: 0.6; }
+        .action-group { display: flex; gap: 15px; opacity: 0.6; margin-left: 10px; }
         .icon-btn { cursor: pointer; font-size: 0.9rem; color: #aaa; transition: 0.2s; }
         .icon-btn:hover { color: var(--primary); }
         
@@ -117,12 +136,12 @@
 
         .save-status { position: fixed; bottom: 20px; left: 20px; background: #333; color: white; padding: 8px 12px; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
         
-        /* --- Calculator --- */
+        /* Calculator */
         .calc-widget { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-        .calc-btn { width: 50px; height: 50px; background: #333; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s; font-size: 1.2rem; }
+        .calc-btn { width: 50px; height: 50px; background: #333; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s; font-size: 1.2rem; border-radius: 50% !important; }
         .calc-btn:hover { background: black; }
         
-        .calc-popup { position: absolute; top: 60px; right: 0; width: 300px; background: #222; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 20px; display: none; animation: fadeIn 0.2s; color: white; }
+        .calc-popup { position: absolute; top: 60px; right: 0; width: 300px; background: #222; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 20px; display: none; animation: fadeIn 0.2s; color: white; border-radius: 12px !important; }
         .calc-popup.show { display: block; }
         
         .calc-screen { margin-bottom: 15px; background: #333; padding: 15px; text-align: right; border: 1px solid #444; }
@@ -138,7 +157,7 @@
         .calc-key.clear { background: #c0392b; font-size: 1rem; }
         .rate-info { margin-top: 10px; text-align: center; font-size: 0.75rem; color: #666; }
 
-        /* --- Rule #5: Unified Edit Modal --- */
+        /* Unified Edit Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
         .modal-content { background: white; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -157,7 +176,7 @@
 
         .modal-footer-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; font-size: 1rem; cursor: pointer; }
 
-        /* --- Expense Modal (Rule #8: Payer) --- */
+        /* Expense Modal */
         .expense-list { flex: 1; overflow-y: auto; padding: 0; }
         .expense-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; }
         .expense-row:last-child { border-bottom: none; }
@@ -205,9 +224,9 @@
             <button class="calc-key" onclick="calcAppend(1)">1</button>
             <button class="calc-key" onclick="calcAppend(2)">2</button>
             <button class="calc-key" onclick="calcAppend(3)">3</button>
-            <button class="calc-key op" style="grid-row: span 2; height: 100%;" onclick="toggleCalc()"><i class="fas fa-check"></i></button>
+            <button class="calc-key op" style="grid-row: span 2; height: 100%; border-radius: 12px !important;" onclick="toggleCalc()"><i class="fas fa-check"></i></button>
             
-            <button class="calc-key" onclick="calcAppend(0)" style="grid-column: span 2; width: 100%;">0</button>
+            <button class="calc-key" onclick="calcAppend(0)" style="grid-column: span 2; width: 100%; border-radius: 12px !important;">0</button>
             <button class="calc-key" onclick="calcAppend('.')">.</button>
         </div>
         <div class="rate-info">
@@ -310,7 +329,7 @@
     window.db = db; window.storage = storage; window.tripId = tripId; window.doc = doc; window.setDoc = setDoc; window.ref = ref; window.uploadBytes = uploadBytes; window.getDownloadURL = getDownloadURL;
 
     window.onload = async function() {
-        fetchExchangeRate(); // Rule #7
+        fetchExchangeRate();
         try {
             const docRef = doc(db, "trips", tripId);
             const docSnap = await getDoc(docRef);
@@ -372,7 +391,6 @@
 </script>
 
 <script>
-    // --- UI Logic ---
     const catColors = { 'spot': 'var(--cat-spot)', 'food': 'var(--cat-food)', 'shop': 'var(--cat-shop)', 'transport': 'var(--cat-transport)', 'hotel': 'var(--cat-hotel)' };
     const defaultData = {
         title: "2025 聖誕京阪",
@@ -404,7 +422,11 @@
     function createDayDOM(dayId, dayNameText, dateVal, items, expenses = []) {
         const tabBtn = document.createElement('div');
         tabBtn.className = 'tab-btn'; tabBtn.id = 'btn-' + dayId;
-        tabBtn.innerHTML = `<span class="tab-text" contenteditable="true">${dayNameText}</span><i class="fas fa-times tab-del" onclick="removeDay(event, '${dayId}')"></i>`;
+        // Rule #1: Safer delete button layout
+        tabBtn.innerHTML = `
+            <span class="tab-text" contenteditable="true">${dayNameText}</span>
+            <div class="tab-del-wrapper"><i class="fas fa-times tab-del" onclick="removeDay(event, '${dayId}')"></i></div>
+        `;
         tabBtn.onclick = function() { switchTab(dayId, this); };
         document.querySelector('.add-day-btn').before(tabBtn);
 
@@ -412,7 +434,7 @@
 
         const section = document.createElement('div');
         section.id = dayId; section.className = 'day-section';
-        // Rule #3: Header Layout
+        
         section.innerHTML = `
             <div class="day-config-card">
                 <div class="day-info-left">
@@ -432,7 +454,7 @@
         items.forEach(item => addSpot(`list-${dayId}`, item));
     }
 
-    // Rule #6: Long Press Drag Logic
+    // Rule #4 & #6: Improved Long Press Drag Logic
     let dragTimer;
     let draggedItem = null;
 
@@ -452,20 +474,28 @@
     }
 
     function startPress(e) {
-        if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.classList.contains('icon-btn') || e.target.classList.contains('location-name')) return;
+        // Ignore clicks on interactive elements
+        if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.classList.contains('icon-btn') || e.target.classList.contains('location-name') || e.target.closest('.expense-btn')) return;
+        
         draggedItem = this;
+        // Visual cue for pending drag
+        draggedItem.style.transition = 'transform 0.1s';
+        draggedItem.style.transform = 'scale(0.98)';
+        
         dragTimer = setTimeout(() => {
             draggedItem.setAttribute('draggable', 'true');
-            // Visual feedback
             draggedItem.style.opacity = '0.7';
-        }, 500); 
+            // Vibrate on mobile if supported
+            if (navigator.vibrate) navigator.vibrate(50);
+        }, 300); // 300ms long press
     }
 
     function cancelPress() {
         clearTimeout(dragTimer);
         if(draggedItem) {
             draggedItem.style.opacity = '1';
-            // If dragging didn't start, disable it
+            draggedItem.style.transform = 'scale(1)';
+            // Small delay to prevent accidental drag immediately after mouseup
             setTimeout(()=>draggedItem.setAttribute('draggable', 'false'), 100);
         }
     }
@@ -480,8 +510,7 @@
         let d = data || { time: '12:00', name: '新行程', type: 'spot', note: '', img: '', link: '' };
         div.dataset.link = d.link || '';
 
-        // Rule #2: Link Style (Black text, Color Icon)
-        const mapIconColor = d.link ? 'color:#e76f51' : 'color:#ccc';
+        const mapIconColor = d.link ? 'active' : '';
         const nameCursor = d.link ? 'cursor:pointer' : 'cursor:default';
         const nameClick = d.link ? `onclick="window.open('${d.link}', '_blank')"` : '';
 
@@ -493,7 +522,6 @@
                         <input type="time" class="time-input-hidden" value="${d.time}" oninput="updateTimeDisplay(this)">
                     </div>
                     <select class="cat-select" onchange="updateCatColor(this)" style="background-color: ${catColors[d.type] || 'var(--cat-spot)'};">
-                        
                         <option value="spot" ${d.type=='spot'?'selected':''}>景點</option>
                         <option value="food" ${d.type=='food'?'selected':''}>餐廳</option>
                         <option value="shop" ${d.type=='shop'?'selected':''}>購物</option>
@@ -505,7 +533,7 @@
             <div class="item-main-row">
                 <div class="location-group">
                     <span class="location-name" style="${nameCursor}" ${nameClick}>${d.name}</span>
-                    <i class="fas fa-map-marker-alt map-icon" style="${mapIconColor}"></i>
+                    <i class="fas fa-map-marker-alt map-icon ${mapIconColor}"></i>
                 </div>
                 <div class="action-group">
                     <i class="fas fa-pen icon-btn" onclick="openEditModal('${div.id}')"></i>
@@ -520,7 +548,6 @@
         container.appendChild(div);
         bindLongPressDrag(div);
         
-        // Init Drag Over for container
         container.addEventListener('dragover', e => {
             e.preventDefault();
             const afterElement = getDragAfterElement(container, e.clientY);
@@ -532,7 +559,7 @@
         });
     }
 
-    // --- Unified Edit Modal (Rule #5) ---
+    // --- Unified Edit Modal ---
     let editingSpotId = null;
     let tempImgUrl = "";
 
@@ -577,25 +604,22 @@
         const link = document.getElementById('editLink').value;
         const note = document.getElementById('editNote').value;
 
-        // Update UI
         item.querySelector('.location-name').innerText = name;
         item.dataset.link = link;
         item.querySelector('.note-area').innerText = note;
         
-        // Update Link Style
         const nameEl = item.querySelector('.location-name');
         const iconEl = item.querySelector('.map-icon');
         if(link) {
             nameEl.style.cursor = 'pointer';
             nameEl.onclick = () => window.open(link, '_blank');
-            iconEl.style.color = '#e76f51';
+            iconEl.classList.add('active');
         } else {
             nameEl.style.cursor = 'default';
             nameEl.onclick = null;
-            iconEl.style.color = '#ccc';
+            iconEl.classList.remove('active');
         }
 
-        // Update Image
         const imgWrapper = item.querySelector('.img-wrapper');
         const imgArea = item.querySelector('.img-area');
         imgWrapper.dataset.bgUrl = tempImgUrl;
@@ -607,9 +631,9 @@
         triggerAutoSave();
     }
 
-    // --- Calculator Logic (Rule #7 API) ---
+    // --- Calculator Logic ---
     let currentCalcVal = '0';
-    let apiRate = 0.22; // Default fallback
+    let apiRate = 0.22; 
 
     window.toggleCalc = function() { document.getElementById('calcPopup').classList.toggle('show'); }
     window.calcAppend = function(val) {
@@ -636,7 +660,7 @@
         } catch(e) { console.log('Rate API Error', e); }
     }
 
-    // --- Expense Modal Logic (Rule #8 Payer) ---
+    // --- Expense Modal Logic ---
     let currentExpenseDayId = null;
     let expenseDataBuffer = [];
 
@@ -770,10 +794,14 @@
                 const code = data.daily.weathercode[0];
                 const min = data.daily.temperature_2m_min[0];
                 const max = data.daily.temperature_2m_max[0];
-                let icon = 'fas fa-cloud';
-                if(code === 0) icon = 'fas fa-sun';
-                else if(code >= 51) icon = 'fas fa-umbrella';
-                display.innerHTML = `<i class="${icon}"></i> ${min}-${max}°C`;
+                
+                // Rule #3: Colored Weather Icons
+                let iconHtml = '';
+                if(code === 0) iconHtml = '<i class="fas fa-sun" style="color:#f39c12"></i>'; // Orange Sun
+                else if(code >= 51) iconHtml = '<i class="fas fa-umbrella" style="color:#3498db"></i>'; // Blue Rain
+                else iconHtml = '<i class="fas fa-cloud" style="color:#7f8c8d"></i>'; // Grey Cloud
+
+                display.innerHTML = `${iconHtml} ${min}-${max}°C`;
             } else { display.innerHTML = '查無資料'; }
         } catch (e) { display.innerHTML = '--'; }
     }
