@@ -60,7 +60,7 @@
             width: 50px; background: #e0e0e0; border: none; color: #555; 
             display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;
         }
-        .manage-days-btn:hover { background: #d0d0d0; }
+        .manage-days-btn:hover { background: #F3EDE2; }
 
         /* Content */
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
@@ -254,7 +254,7 @@
 <div class="modal-overlay" id="expenseModal" onclick="if(event.target===this) closeExpenseModal()">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title"><i class="fas fa-wallet"></i> 當日消費紀錄</div>
+            <div class="modal-title"><i class="fas fa-wallet"></i>當日消費</div>
             <div class="modal-close" onclick="closeExpenseModal()">&times;</div>
         </div>
         <div class="expense-list" id="expenseListContainer"></div>
@@ -295,12 +295,12 @@
             <div class="form-group">
                 <label class="form-label">封面照片</label>
                 <label class="edit-img-preview" id="editImgPreview">
-                    <i class="fas fa-camera"></i> &nbsp;點擊新增
+                    <i class="fas fa-camera"></i> &nbsp;上傳
                     <input type="file" accept="image/*" onchange="uploadEditImage(this)">
                 </label>
             </div>
         </div>
-        <button class="modal-footer-btn" onclick="saveSpotChanges()">儲存變更</button>
+        <button class="modal-footer-btn" onclick="saveSpotChanges()">儲存</button>
     </div>
 </div>
 
