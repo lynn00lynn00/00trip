@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2025 聖誕京阪</title>
+    <title>2025聖誕京阪</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.2.1/dist/compressor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
     <style>
          :root {
@@ -26,55 +27,44 @@
             --cat-hotel: #8D6E63;
         }
 
-        /* Rule: Sharp corners globally */
+        /* Sharp styling */
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; border-radius: 0; } 
-        
-        /* Rule #2: Specific override for rounded category tags */
         .cat-select { border-radius: 50px !important; }
-        .calc-btn, .calc-key { border-radius: 0 !important; } /* Keep calc sharp */
-        .calc-key { border-radius: 50% !important; } /* Round calc keys */
+        .calc-key, .calc-btn { border-radius: 50% !important; }
+        .calc-popup { border-radius: 12px !important; }
 
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 0; padding-bottom: 120px; letter-spacing: 0.02em; }
 
         input[type="file"] { display: none !important; }
 
         /* Header */
-        header { position: relative; height: 200px; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; transition: background-image 0.3s; background-color: #ddd; }
+        header { position: relative; height: 200px; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; background-color: #ddd; }
         header::after { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%); }
         .header-content { position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; }
         .header-title { color: white; font-size: 1.6rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; cursor: text; min-width: 50%; }
-        .edit-cover-btn { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; font-size: 0.8rem; backdrop-filter: blur(5px); cursor: pointer; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; gap: 5px; transition: 0.2s; position: relative; z-index: 10; }
+        .edit-cover-btn { background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; font-size: 0.8rem; backdrop-filter: blur(5px); cursor: pointer; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; gap: 5px; position: relative; z-index: 10; }
 
-        /* Tabs (Rule #1: Left aligned, Safe Delete) */
-        .tabs-wrapper { position: sticky; top: 0; background: #F3EDE2; backdrop-filter: blur(5px); z-index: 90; padding: 15px 0; border-bottom: 1px solid #ccc; }
-        .tabs { display: flex; justify-content: flex-start; align-items: center; overflow-x: auto; padding: 0 15px; gap: 10px; scrollbar-width: none; }
+        /* Tabs (Refactored: Unified Block) */
+        .tabs-container { position: sticky; top: 0; background: #F3EDE2; z-index: 90; border-bottom: 1px solid #ccc; display: flex; align-items: stretch; height: 50px; }
         
+        .tabs-scroll-area { flex: 1; display: flex; overflow-x: auto; scrollbar-width: none; }
         .tab-btn { 
-            background: transparent; border: 1px solid #999; color: #666; 
-            padding: 0; /* Remove padding from container, move to children */
-            cursor: pointer; white-space: nowrap; flex-shrink: 0; font-size: 0.95rem; 
-            transition: 0.2s; min-width: 100px; text-align: center; font-weight: 500; 
-            display: flex; align-items: stretch; justify-content: space-between;
-            overflow: hidden;
+            flex: 1; min-width: 80px; background: transparent; border: none; border-right: 1px solid #e0e0e0; 
+            color: #888; font-weight: 500; font-size: 0.95rem; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .tab-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+        .tab-btn.active { background: var(--primary); color: white; border-right-color: var(--primary); }
         
-        .tab-text { padding: 8px 12px; flex-grow: 1; outline: none; }
-        
-        .tab-del-wrapper {
-            display: flex; align-items: center; justify-content: center;
-            width: 30px; border-left: 1px solid rgba(0,0,0,0.1);
-            background: rgba(0,0,0,0.02);
+        /* Manage Button */
+        .manage-days-btn { 
+            width: 50px; background: #e0e0e0; border: none; color: #555; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;
         }
-        .tab-btn.active .tab-del-wrapper { border-left: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); }
-        .tab-del { font-size: 0.8rem; opacity: 0.7; padding: 5px; }
-        .tab-del:hover { color: #ff6b6b; opacity: 1; }
-        
-        .add-day-btn { background: #ccc; color: #fff; border: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; margin-left: 5px; }
+        .manage-days-btn:hover { background: #d0d0d0; }
 
         /* Content */
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
-        .day-section { display: none; animation: fadeIn 0.4s ease; }
+        .day-section { display: none; animation: fadeIn 0.3s ease; }
         .day-section.active { display: block; }
         
         .day-config-card { background: white; padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
@@ -88,18 +78,18 @@
             display: flex; flex-direction: column; align-items: flex-end; gap: 2px; transition: 0.2s; 
             min-width: 100px;
         }
-        .expense-btn:hover { background: #eaeaea; border-color: #ccc; }
-        .expense-btn small { font-size: 0.75rem; color: #888; }
         .exp-total-display { font-weight: bold; color: var(--text-main); font-size: 1rem; }
 
         /* Timeline Item */
-        /* Rule #4: Drag Fix - User Select */
         .timeline-container { position: relative; padding-left: 20px; min-height: 50px; }
         .timeline-container::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #ccc; z-index: 0; }
         
-        .timeline-item { background: var(--card-bg); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 1; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border-color); border-left: 4px solid var(--cat-spot); user-select: none; }
-        .timeline-item.dragging { opacity: 0.5; transform: scale(0.98); border: 1px dashed #999; }
+        .timeline-item { background: var(--card-bg); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; z-index: 1; border: 1px solid var(--border-color); border-left: 4px solid var(--cat-spot); }
         
+        /* SortableJS Ghost Class */
+        .sortable-ghost { opacity: 0.4; background: #f0f0f0; border: 2px dashed #999; }
+        .sortable-drag { opacity: 1; transform: scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
         .item-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
         .meta-left { display: flex; align-items: center; gap: 12px; }
         
@@ -107,14 +97,12 @@
         .time-display { font-family: 'Roboto', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-main); position: absolute; top: 0; left: 0; pointer-events: none; }
         .time-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5; }
         
-        /* Rule #2: Round Pill for Category */
         .cat-select { border: none; padding: 4px 12px; font-size: 0.75rem; color: white; font-weight: 500; appearance: none; text-align: center; cursor: pointer; letter-spacing: 1px; position: relative; z-index: 5; background-color: var(--cat-spot); }
 
         .item-main-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 5; }
         .location-group { flex: 1; display: flex; align-items: center; gap: 8px; }
         
         .location-name { font-size: 1.1rem; font-weight: 500; color: var(--text-main); text-decoration: none; cursor: pointer; }
-        .location-name:hover { opacity: 0.8; }
         .map-icon { color: #ccc; font-size: 0.9rem; transition: 0.2s; }
         .map-icon.active { color: #e76f51; }
 
@@ -122,6 +110,10 @@
         .icon-btn { cursor: pointer; font-size: 0.9rem; color: #aaa; transition: 0.2s; }
         .icon-btn:hover { color: var(--primary); }
         
+        /* Drag Handle (Visible but discrete) */
+        .drag-handle { color: #ddd; cursor: grab; padding: 5px; font-size: 0.9rem; }
+        .drag-handle:active { cursor: grabbing; color: var(--primary); }
+
         .img-wrapper { display: none; margin-top: 10px; overflow: hidden; position: relative; z-index: 5; }
         .img-wrapper.show { display: block; animation: slideDown 0.3s ease; }
         .img-area { width: 100%; height: 180px; background-color: #f2f2f2; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; }
@@ -138,18 +130,15 @@
         
         /* Calculator */
         .calc-widget { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-        .calc-btn { width: 50px; height: 50px; background: #333; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s; font-size: 1.2rem; border-radius: 50% !important; }
+        .calc-btn { width: 50px; height: 50px; background: #333; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s; font-size: 1.2rem; }
         .calc-btn:hover { background: black; }
-        
-        .calc-popup { position: absolute; top: 60px; right: 0; width: 300px; background: #222; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 20px; display: none; animation: fadeIn 0.2s; color: white; border-radius: 12px !important; }
+        .calc-popup { position: absolute; top: 60px; right: 0; width: 300px; background: #222; box-shadow: 0 15px 40px rgba(0,0,0,0.4); padding: 20px; display: none; animation: fadeIn 0.2s; color: white; }
         .calc-popup.show { display: block; }
-        
         .calc-screen { margin-bottom: 15px; background: #333; padding: 15px; text-align: right; border: 1px solid #444; }
         .calc-row-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .calc-label { font-size: 0.8rem; color: #888; }
         .calc-val { font-size: 1.5rem; font-family: 'Roboto', sans-serif; font-weight: bold; color: #fff; }
         #calcScreenTwd { color: #D4A373; }
-        
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .calc-key { background: #444; border: none; color: white; height: 60px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
         .calc-key:active { background: #666; }
@@ -157,36 +146,35 @@
         .calc-key.clear { background: #c0392b; font-size: 1rem; }
         .rate-info { margin-top: 10px; text-align: center; font-size: 0.75rem; color: #666; }
 
-        /* Unified Edit Modal */
+        /* Unified Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
         .modal-content { background: white; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-        
         .modal-header { padding: 15px 20px; background: #f9f9f9; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .modal-title { font-weight: bold; font-size: 1.1rem; color: var(--text-main); }
         .modal-close { cursor: pointer; font-size: 1.5rem; color: #aaa; }
-        
         .modal-body { padding: 20px; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 5px; }
         .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; font-size: 1rem; background: #fff; }
         .form-textarea { width: 100%; padding: 10px; border: 1px solid #ddd; font-size: 1rem; height: 80px; resize: none; }
-        
         .edit-img-preview { width: 100%; height: 150px; background: #eee; margin-top: 5px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; cursor: pointer; border: 1px dashed #ccc; color: #aaa; }
-
         .modal-footer-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; font-size: 1rem; cursor: pointer; }
+
+        /* Manage Days Modal */
+        .day-list-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .day-list-input { flex: 1; padding: 10px; border: 1px solid #eee; background: #f9f9f9; }
+        .day-list-del { color: #e74c3c; cursor: pointer; padding: 5px; }
 
         /* Expense Modal */
         .expense-list { flex: 1; overflow-y: auto; padding: 0; }
         .expense-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; }
-        .expense-row:last-child { border-bottom: none; }
         .expense-row-info { flex: 1; }
         .exp-name { font-weight: 500; color: #333; }
         .exp-payer { font-size: 0.8rem; color: #888; margin-right: 5px; background: #eee; padding: 2px 6px; }
         .exp-cost { font-weight: bold; color: var(--text-main); }
         .expense-row-del { color: #ddd; cursor: pointer; padding: 5px; margin-left: 10px; }
         .expense-row-del:hover { color: #D62828; }
-
         .modal-footer { background: #f9f9f9; padding: 20px; border-top: 1px solid #ddd; }
         .expense-input-row { display: flex; gap: 5px; margin-bottom: 5px; }
         .expense-add-btn { width: 100%; background: #333; color: white; border: none; padding: 10px; cursor: pointer; margin-top: 5px; }
@@ -215,23 +203,18 @@
             <button class="calc-key" onclick="calcAppend(8)">8</button>
             <button class="calc-key" onclick="calcAppend(9)">9</button>
             <button class="calc-key clear" onclick="calcClear()">C</button>
-            
             <button class="calc-key" onclick="calcAppend(4)">4</button>
             <button class="calc-key" onclick="calcAppend(5)">5</button>
             <button class="calc-key" onclick="calcAppend(6)">6</button>
             <button class="calc-key clear" onclick="calcBack()"><i class="fas fa-backspace"></i></button>
-            
             <button class="calc-key" onclick="calcAppend(1)">1</button>
             <button class="calc-key" onclick="calcAppend(2)">2</button>
             <button class="calc-key" onclick="calcAppend(3)">3</button>
-            <button class="calc-key op" style="grid-row: span 2; height: 100%; border-radius: 12px !important;" onclick="toggleCalc()"><i class="fas fa-check"></i></button>
-            
+            <button class="calc-key op" style="grid-row: span 2; height: 100%;" onclick="toggleCalc()"><i class="fas fa-check"></i></button>
             <button class="calc-key" onclick="calcAppend(0)" style="grid-column: span 2; width: 100%; border-radius: 12px !important;">0</button>
             <button class="calc-key" onclick="calcAppend('.')">.</button>
         </div>
-        <div class="rate-info">
-            今日匯率: <span id="currentRateDisplay">--</span> (來源: API)
-        </div>
+        <div class="rate-info">今日匯率: <span id="currentRateDisplay">--</span></div>
     </div>
 </div>
 
@@ -245,11 +228,28 @@
     </div>
 </header>
 
-<div class="tabs-wrapper">
-    <div class="tabs" id="tabContainer"></div>
+<div class="tabs-container">
+    <div class="tabs-scroll-area" id="tabContainer">
+        </div>
+    <button class="manage-days-btn" onclick="openManageDays()" title="管理行程天數">
+        <i class="fas fa-cog"></i>
+    </button>
 </div>
 
 <div class="container" id="daysContainer"></div>
+
+<div class="modal-overlay" id="manageDaysModal" onclick="if(event.target===this) closeManageDays()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">管理行程天數</div>
+            <div class="modal-close" onclick="closeManageDays()">&times;</div>
+        </div>
+        <div class="modal-body" id="manageDaysList">
+            </div>
+        <button class="modal-footer-btn" style="background:#555; margin-bottom:1px;" onclick="addDayInManage()">+ 新增</button>
+        <button class="modal-footer-btn" onclick="saveDayChanges()">儲存設定</button>
+    </div>
+</div>
 
 <div class="modal-overlay" id="expenseModal" onclick="if(event.target===this) closeExpenseModal()">
     <div class="modal-content">
@@ -257,13 +257,11 @@
             <div class="modal-title"><i class="fas fa-wallet"></i> 當日消費紀錄</div>
             <div class="modal-close" onclick="closeExpenseModal()">&times;</div>
         </div>
-        
         <div class="expense-list" id="expenseListContainer"></div>
-
         <div class="modal-footer">
             <div style="text-align:right; margin-bottom:10px; font-weight:bold; color:#333;">Total: ¥<span id="modalTotal">0</span></div>
             <div class="expense-input-row">
-                <input type="text" id="newExpName" class="form-input" placeholder="品項 (如: 拉麵)" style="flex:2">
+                <input type="text" id="newExpName" class="form-input" placeholder="品項" style="flex:2">
                 <input type="text" id="newExpPayer" class="form-input" placeholder="付款人" style="flex:1">
             </div>
             <div class="expense-input-row">
@@ -297,7 +295,7 @@
             <div class="form-group">
                 <label class="form-label">封面照片</label>
                 <label class="edit-img-preview" id="editImgPreview">
-                    <i class="fas fa-camera"></i> &nbsp;點擊更換
+                    <i class="fas fa-camera"></i> &nbsp;點擊新增
                     <input type="file" accept="image/*" onchange="uploadEditImage(this)">
                 </label>
             </div>
@@ -347,8 +345,11 @@
         const days = [];
         document.querySelectorAll('.day-section').forEach(section => {
             const date = section.querySelector('.date-picker').value;
-            const tabBtn = document.getElementById('btn-' + section.id);
-            const dayName = tabBtn ? tabBtn.querySelector('.tab-text').innerText : 'New Day';
+            // Get name from global tab data if possible, or fallback
+            const dayIdx = Array.from(section.parentNode.children).indexOf(section);
+            const tabBtn = document.querySelectorAll('.tab-btn')[dayIdx];
+            const dayName = tabBtn ? tabBtn.innerText : 'Day ' + (dayIdx+1);
+            
             const items = [];
             section.querySelectorAll('.timeline-item').forEach(item => {
                 const nameEl = item.querySelector('.location-name');
@@ -409,31 +410,25 @@
         document.getElementById('tabContainer').innerHTML = '';
         document.getElementById('daysContainer').innerHTML = '';
         
-        const addBtn = document.createElement('button');
-        addBtn.className = 'add-day-btn'; addBtn.onclick = addNewDay; addBtn.innerHTML = '<i class="fas fa-plus"></i>';
-        document.getElementById('tabContainer').appendChild(addBtn);
-
         if(data.days && data.days.length > 0) {
-            data.days.forEach(day => createDayDOM(day.id, day.dayName, day.date, day.items, day.expenses || []));
-            switchTab(data.days[0].id, document.getElementById('btn-' + data.days[0].id));
+            data.days.forEach((day, index) => createDayDOM(day.id, day.dayName, day.date, day.items, day.expenses || [], index === 0));
         }
     }
 
-    function createDayDOM(dayId, dayNameText, dateVal, items, expenses = []) {
-        const tabBtn = document.createElement('div');
-        tabBtn.className = 'tab-btn'; tabBtn.id = 'btn-' + dayId;
-        // Rule #1: Safer delete button layout
-        tabBtn.innerHTML = `
-            <span class="tab-text" contenteditable="true">${dayNameText}</span>
-            <div class="tab-del-wrapper"><i class="fas fa-times tab-del" onclick="removeDay(event, '${dayId}')"></i></div>
-        `;
+    function createDayDOM(dayId, dayNameText, dateVal, items, expenses = [], isActive = false) {
+        // Create Tab Button (Simple)
+        const tabBtn = document.createElement('button');
+        tabBtn.className = `tab-btn ${isActive ? 'active' : ''}`;
+        tabBtn.id = 'btn-' + dayId;
+        tabBtn.innerText = dayNameText;
         tabBtn.onclick = function() { switchTab(dayId, this); };
-        document.querySelector('.add-day-btn').before(tabBtn);
+        document.getElementById('tabContainer').appendChild(tabBtn);
 
         const totalExp = expenses.reduce((sum, item) => sum + (parseInt(item.cost) || 0), 0);
 
         const section = document.createElement('div');
-        section.id = dayId; section.className = 'day-section';
+        section.id = dayId; 
+        section.className = `day-section ${isActive ? 'active' : ''}`;
         
         section.innerHTML = `
             <div class="day-config-card">
@@ -442,7 +437,7 @@
                     <div class="weather-display"><span class="weather-text">--°C</span></div>
                 </div>
                 <div class="expense-btn" onclick="openExpenseModal('${dayId}')" data-expenses='${JSON.stringify(expenses)}'>
-                    <small>記帳本</small>
+                    <small>當日消費</small>
                     <span class="exp-total-display">¥${totalExp}</span>
                 </div>
             </div>
@@ -451,53 +446,20 @@
         `;
         document.getElementById('daysContainer').appendChild(section);
         fetchWeather(section.querySelector('.date-picker'));
+        
+        const listContainer = section.querySelector('.timeline-container');
         items.forEach(item => addSpot(`list-${dayId}`, item));
-    }
 
-    // Rule #4 & #6: Improved Long Press Drag Logic
-    let dragTimer;
-    let draggedItem = null;
-
-    function bindLongPressDrag(item) {
-        item.addEventListener('mousedown', startPress);
-        item.addEventListener('touchstart', startPress);
-        item.addEventListener('mouseup', cancelPress);
-        item.addEventListener('mouseleave', cancelPress);
-        item.addEventListener('touchend', cancelPress);
-        
-        item.addEventListener('dragstart', () => item.classList.add('dragging'));
-        item.addEventListener('dragend', () => {
-            item.classList.remove('dragging');
-            item.setAttribute('draggable', 'false'); 
-            triggerAutoSave();
+        // Initialize SortableJS
+        new Sortable(listContainer, {
+            handle: '.drag-handle', // Drag handle selector
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            delay: 100, // Slight delay to prevent accidental drag
+            delayOnTouchOnly: true,
+            onEnd: function() { triggerAutoSave(); }
         });
-    }
-
-    function startPress(e) {
-        // Ignore clicks on interactive elements
-        if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.classList.contains('icon-btn') || e.target.classList.contains('location-name') || e.target.closest('.expense-btn')) return;
-        
-        draggedItem = this;
-        // Visual cue for pending drag
-        draggedItem.style.transition = 'transform 0.1s';
-        draggedItem.style.transform = 'scale(0.98)';
-        
-        dragTimer = setTimeout(() => {
-            draggedItem.setAttribute('draggable', 'true');
-            draggedItem.style.opacity = '0.7';
-            // Vibrate on mobile if supported
-            if (navigator.vibrate) navigator.vibrate(50);
-        }, 300); // 300ms long press
-    }
-
-    function cancelPress() {
-        clearTimeout(dragTimer);
-        if(draggedItem) {
-            draggedItem.style.opacity = '1';
-            draggedItem.style.transform = 'scale(1)';
-            // Small delay to prevent accidental drag immediately after mouseup
-            setTimeout(()=>draggedItem.setAttribute('draggable', 'false'), 100);
-        }
     }
 
     function addSpot(containerId, data = null) {
@@ -505,7 +467,6 @@
         const div = document.createElement('div');
         div.className = 'timeline-item';
         div.id = data ? data.id : 'item_' + Date.now();
-        div.setAttribute('draggable', 'false'); 
         
         let d = data || { time: '12:00', name: '新行程', type: 'spot', note: '', img: '', link: '' };
         div.dataset.link = d.link || '';
@@ -515,6 +476,7 @@
         const nameClick = d.link ? `onclick="window.open('${d.link}', '_blank')"` : '';
 
         div.innerHTML = `
+            <div class="drag-handle"><i class="fas fa-grip-lines"></i></div>
             <div class="item-meta-row">
                 <div class="meta-left">
                     <div class="time-wrapper">
@@ -546,20 +508,105 @@
             <div class="note-area">${d.note}</div>
         `;
         container.appendChild(div);
-        bindLongPressDrag(div);
-        
-        container.addEventListener('dragover', e => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(container, e.clientY);
-            const draggable = document.querySelector('.dragging');
-            if (draggable) {
-                if (afterElement == null) container.appendChild(draggable);
-                else container.insertBefore(draggable, afterElement);
-            }
-        });
     }
 
-    // --- Unified Edit Modal ---
+    // --- Manage Days Logic (Unified Edit) ---
+    function openManageDays() {
+        const list = document.getElementById('manageDaysList');
+        list.innerHTML = '';
+        document.querySelectorAll('.day-section').forEach((section, index) => {
+            const dayId = section.id;
+            const tab = document.getElementById('btn-' + dayId);
+            const name = tab.innerText;
+            const div = document.createElement('div');
+            div.className = 'day-list-item';
+            div.innerHTML = `
+                <input type="text" class="day-list-input day-name-edit" data-id="${dayId}" value="${name}">
+                <i class="fas fa-trash day-list-del" onclick="markDayDelete(this)"></i>
+            `;
+            list.appendChild(div);
+        });
+        document.getElementById('manageDaysModal').classList.add('show');
+    }
+
+    function addDayInManage() {
+        const list = document.getElementById('manageDaysList');
+        const newId = 'day' + Date.now();
+        const div = document.createElement('div');
+        div.className = 'day-list-item new-day';
+        div.innerHTML = `
+            <input type="text" class="day-list-input day-name-edit" data-id="${newId}" value="Day X">
+            <i class="fas fa-trash day-list-del" onclick="this.parentElement.remove()"></i>
+        `;
+        list.appendChild(div);
+    }
+
+    function markDayDelete(btn) {
+        const row = btn.parentElement;
+        if(row.style.opacity === '0.3') {
+            row.style.opacity = '1';
+            row.classList.remove('deleted');
+        } else {
+            row.style.opacity = '0.3';
+            row.classList.add('deleted');
+        }
+    }
+
+    function closeManageDays() { document.getElementById('manageDaysModal').classList.remove('show'); }
+
+    function saveDayChanges() {
+        const rows = document.querySelectorAll('#manageDaysList .day-list-item');
+        const currentData = [];
+        
+        // Collect current data before Nuke
+        document.querySelectorAll('.day-section').forEach(section => {
+            const items = [];
+            const expBtn = section.querySelector('.expense-btn');
+            section.querySelectorAll('.timeline-item').forEach(item => {
+                // ... collect item data (simplified) ...
+                items.push({
+                    id: item.id,
+                    time: item.querySelector('.time-display').innerText,
+                    type: item.querySelector('.cat-select').value,
+                    name: item.querySelector('.location-name').innerText,
+                    link: item.dataset.link || '',
+                    note: item.querySelector('.note-area').innerText,
+                    img: item.querySelector('.img-wrapper').dataset.bgUrl || ''
+                });
+            });
+            currentData.push({ 
+                id: section.id, 
+                date: section.querySelector('.date-picker').value, 
+                items: items, 
+                expenses: JSON.parse(expBtn.dataset.expenses || '[]')
+            });
+        });
+
+        // Rebuild based on Modal
+        const finalDays = [];
+        rows.forEach(row => {
+            if(row.classList.contains('deleted')) return;
+            const input = row.querySelector('.day-name-edit');
+            const id = input.dataset.id;
+            const name = input.value;
+            
+            let existing = currentData.find(d => d.id === id);
+            if(existing) {
+                existing.dayName = name;
+                finalDays.push(existing);
+            } else {
+                // New Day
+                finalDays.push({ id: id, dayName: name, date: new Date().toISOString().split('T')[0], items: [], expenses: [] });
+            }
+        });
+
+        // Re-render
+        renderTrip({ title: document.getElementById('tripTitle').innerText, cover: document.getElementById('mainHeader').dataset.bgUrl, days: finalDays });
+        closeManageDays();
+        triggerAutoSave();
+    }
+
+    // --- Unified Edit Spot Modal ---
     let editingSpotId = null;
     let tempImgUrl = "";
 
@@ -742,21 +789,8 @@
     }
 
     function addNewDay() {
-        const id = 'day' + Date.now();
-        createDayDOM(id, "New Day", new Date().toISOString().split('T')[0], [], []);
-        const tabs = document.querySelectorAll('.tab-btn');
-        switchTab(id, tabs[tabs.length-1]);
-        triggerAutoSave();
-    }
-
-    function removeDay(event, dayId) {
-        event.stopPropagation();
-        if(confirm('確定刪除這一天嗎？')) {
-            document.getElementById('btn-' + dayId)?.remove();
-            document.getElementById(dayId)?.remove();
-            document.querySelector('.tab-btn')?.click();
-            triggerAutoSave();
-        }
+        // Just open Manage Dialog, simpler flow
+        openManageDays();
     }
 
     function updateTimeDisplay(input) { input.previousElementSibling.innerText = input.value; }
@@ -765,20 +799,10 @@
         select.closest('.timeline-item').style.borderLeftColor = catColors[select.value];
     }
     function deleteSpot(btn) { 
-        if(confirm('移除此行程？')) {
+        if(confirm('要移除行程嗎？')) {
             btn.closest('.timeline-item').remove();
             triggerAutoSave();
         }
-    }
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.timeline-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
-            else return closest;
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     async function fetchWeather(dateInput) {
@@ -795,11 +819,10 @@
                 const min = data.daily.temperature_2m_min[0];
                 const max = data.daily.temperature_2m_max[0];
                 
-                // Rule #3: Colored Weather Icons
                 let iconHtml = '';
-                if(code === 0) iconHtml = '<i class="fas fa-sun" style="color:#f39c12"></i>'; // Orange Sun
-                else if(code >= 51) iconHtml = '<i class="fas fa-umbrella" style="color:#3498db"></i>'; // Blue Rain
-                else iconHtml = '<i class="fas fa-cloud" style="color:#7f8c8d"></i>'; // Grey Cloud
+                if(code === 0) iconHtml = '<i class="fas fa-sun" style="color:#f39c12"></i>';
+                else if(code >= 51) iconHtml = '<i class="fas fa-umbrella" style="color:#3498db"></i>';
+                else iconHtml = '<i class="fas fa-cloud" style="color:#7f8c8d"></i>';
 
                 display.innerHTML = `${iconHtml} ${min}-${max}°C`;
             } else { display.innerHTML = '查無資料'; }
@@ -809,10 +832,10 @@
     let saveTimeout;
     function triggerAutoSave() {
         const status = document.getElementById('saveStatus');
-        status.innerText = "變更未儲存..."; status.style.opacity = 1;
+        status.innerText = "變更未儲存"; status.style.opacity = 1;
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
-            status.innerText = "自動儲存中...";
+            status.innerText = "自動儲存中";
             window.saveToCloud().then(() => {
                 status.innerText = "已自動儲存"; setTimeout(() => status.style.opacity = 0, 2000);
             });
@@ -822,7 +845,7 @@
     document.body.addEventListener('input', triggerAutoSave);
     document.body.addEventListener('change', triggerAutoSave);
     document.body.addEventListener('click', (e) => {
-        if(e.target.tagName === 'I' || e.target.tagName === 'BUTTON' || e.target.classList.contains('tab-del')) triggerAutoSave();
+        if(e.target.tagName === 'I' || e.target.tagName === 'BUTTON') triggerAutoSave();
     });
 </script>
 </body>
